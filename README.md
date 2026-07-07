@@ -43,19 +43,11 @@ personal_tasks/
 1. **Create a Kanban board** in Jira for each area (e.g., `"Personal Task Mangement"`, `"Horror Movie Analytics"`).
 2. **Create a subdirectory in the projects directory** in this repo matching the board name that's lowercase and uses replaces spaces with underscores (e.g., `personal_task_management/`, `horror_movie_analytics/`).
 3. **For each Jira ticket**:
-  - Create a folder in the subdirectory named after the ticket ID (e.g., `personal_task_management/PTM-<n>/`).
-  - Add a `TASK.md` to the folder with the ticket summary/purpose.
-  - Store all notes, code, and outputs related to the ticket in this folder.
+      - Create a folder in the subdirectory named after the ticket ID (e.g., `personal_task_management/PTM-<n>/`).
+      - Add a `TASK.md` to the folder with the ticket summary/purpose.
+      - Store all notes, code, and outputs related to the ticket in this folder.
 
-### Example
-
-- **Jira Ticket**: [WORK-123: Set up home server](https://your-jira-instance.atlassian.net/browse/WORK-123)
-- **Repo Folder**: [`work/WORK-123/`](./work/WORK-123/)
-  - Contains: `README.md`, `notes.md`, `scripts/setup.sh`, `outputs/logs.txt`
-
----
-
-## 🚀 Automation (TODO!)
+### 🚀 Automation (TODO!)
 
 - Set up a **Jira webhook** to trigger thea shell script automatically to make new ticket subdirectories.
 - Use Jira GitHub integration.
