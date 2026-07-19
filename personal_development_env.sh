@@ -93,8 +93,8 @@ git config --global init.defaultBranch main
 sudo apt update
 sudo apt install nodejs npm
 
-# Install altimate-code (data version of opencode)
-sudo npm install -g altimate-code
+# Install opencode
+curl -fsSL https://opencode.ai/install | bash
 
 # Setup a Nerd Font
 FONT_NAME="FiraMono"
