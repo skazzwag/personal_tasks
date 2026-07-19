@@ -34,6 +34,8 @@ personal_tasks/
 
 (NOTE: there will be loads of projects and tickets so this structure is just demonstrative)
 
+My dotfiles have also been included in this repo and can be applied with `stow .` from the repo root.
+
 ---
 
 ## 🔗 Jira + Repo Linking

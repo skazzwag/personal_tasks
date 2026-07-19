@@ -1,0 +1,16 @@
+[core]
+	editor = fresh
+[user]
+	name = skazzwag
+	email = zak.n.bell@proton.me
+[init]
+	defaultBranch = main
+[credential]
+	helper = store
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[user]
+	signingkey = /home/zak/.ssh/github_personal_laptop_commit_signing.pub
+     

@@ -1,0 +1,871 @@
+# Get token with Azure CLI for connecting to SQL databases with
+ $ az account get-access-token --resource https://ossrdbms-aad.database.windows.net --query accessToken -o tsv
+
+
+How to set up SSH key for signing commits
+
+Step 1 - Generate SSH key for commit signing (ed25519 is a public-key cryptographic algorithm)
+$ ssh-keygen -t ed25519 -C "your@email.com" -f ~/.ssh/id_ed25519_repo-signing
+
+Step 2 - add as a signing key on GitHub
+Go to https://github.com/settings/ssh/new and change key type to "Signing Key"
+Run the following command in terminal: cat ~/.ssh/id_ed25519_repo-signing.pub
+Copy and paste into GitHub new SSH key page
+
+Step 3 - configure git to use this SSH key for signing (think you can add the --global flag to have it done everywhere)
+$ git config gpg.format ssh
+$ git config user.signingkey "$(cat ~/.ssh/id_ed25519_repo-signing.pub)"
+$ git config commit.gpgsign true
+
+Can confirm step 3 is done with the following
+$ git config --get commit.gpgsign
+$ git config --get user.signingkey
+
+Step 4 - Need to make sure that SSH Agent is running and the key is added (commit signing won't work without it)
+$ eval "$(ssh-agent -s)"
+
+Can confirm this with 
+$ ssh-add -l
+
+Add the key with the following
+$ ssh-add ~/.ssh/id_ed25519_repo-signing
+
+Optional Step - Make SSH agent start automatically in terminal by adding the following to .bashrc or .bash_profile
+
+# Start ssh-agent if not running
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+  eval "$(ssh-agent -s)"
+fi
+
+# Add signing key
+ssh-add -q ~/.ssh/id_ed25519_repo-signing 2>/dev/null
+
+
+# Fix the "WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED" error message when updating ssh
+$ ssh-keygen -f "/mnt/c/Users/Zackary/.ssh/known_hosts" -R "ec2-3-9-92-137.eu-west-2.compute.amazonaws.com"
+
+# For micro editor need to install xclip and xsel for copy to work locally (just good to have as well)
+$ sudo apt update && upgrade
+$ sudo apt install xclip
+$ sudo apt install xsel
+
+# Add micro as an editor
+$ sudo update-alternatives --install /usr/bin/editor editor /usr/bin/micro 40
+$ sudo update-alternatives --config editor				# Then give number that corresponds to micro
+
+# Add alias mu for micro and set as editor in the ~/.bashrc file (could also do echo 'export EDITOR=micro' >> ~/.bashrc)
+$ alias mu='micro'
+$ export EDITOR=micro
+
+Emacs keybinds for VScode
+ctrl + f                  Move forward character
+ctrl + b                  Move backward character
+meta + f                  Move forward word
+meta + b                  Move backward word
+ctrl + n                  Move down one line (next)
+ctrl + p                  Move up one line (previous)
+ctrl + a                  Move to beginning of the line
+ctrl + e                  Move to end of the line
+meta + m                  Move to first non-white space character
+
+ctrl + d                  Delete character forward
+ctrl + h                  Delete character backward
+meta + d                  Delete word forward
+meta + <backspace>        Delete word backward
+
+ctrl + s                  Incremental search forward
+ctrl + r                  Incremental search backward
+
+meta + u                  Turn word uppercase
+meta + l                  Turn word lowercase
+meta + c                  Captialize first letter of word
+
+ctrl + v                  Scroll down by one screen unit
+meta + v                  Scroll up by one screen unit
+ctrl + l                  Centre screen on current line
+
+ctrl + ;                  Toggle comment
+ctrl + .                  Go to definition
+
+Ctrl + <space>            Set starting mark for highlighting text
+ctrl + y                  Paste/Yank
+meta + w                  Copy
+ctrl + w                  Cut
+
+ctrl + x ctrl + f         Find file/quick open (like ctrl + p in VScode I think)
+ctrl + x ctrl + s         Save file 
+ctrl + x k                Close tab/buffer
+ctrl + x 0                Close all tabs in current group
+ctrl + x 1                Close all tabs in other group
+ctrl + x u                Undo
+ctrl + x h                Select all
+
+ctrl + meta + n           Add selection to next find match (like ctrl + d in VScode)
+ctrl + meta + p           Add selection to previous find match (like ctrl + d in VScode but other direction)
+ctrl + meta + <space>     Toggle sidebar visibility (i.e. ctrl + b in VScode keybinds)
+shift + alt + p           Copy line up (like VScode but using p instead of up)
+shift + alt + n           Copy line up (like VScode but using n instead of down)
+
+ctrl + shift + backspace  Delete line
+
+
+
+VS code
+crtl + w		Close current active tab. Can closea group if no tabs on it.
+ctrl + k crtl + w	Close all tabs/close group (don't think I actually need ctrl before w)
+ctrl + k p		Copy path of current active tab
+ctrl + shift + t	Reopen closed tab
+esc			Escape cell edit mode
+enter			Enter cell edit mode
+m			Make current select cell markdown when not in edit mode
+y			Change markdown cell back to normal cell when not in edit mode
+crtl + '		Switch between code editor and terminal
+crtl + shift + e	Go to file explorer when not in terminal/go to editor when in file explorer
+ctrl + t		Go to symbol in editor (e.g. #def will show all the functions that you can go to)
+ctrl + d		Highlight word/string the cursor is currently on
+ctrl + alt + up/down	Add cursors above of below
+shift + alt + i		Add cursors to end of highlights on each line highlighted
+ctrl + alt + right	Move file to next group. Makes new group if only one exists
+ctrl + alt + left	Move file to previous group. Doesn't make a new group.
+ctrl + alt + 1		Move focus to group 1. Can use to make a new group as well.
+ctrl + h		When text is selected, using ctrl + h will open the replace all widget. ctrl + alt + enter will replace all when decided
+
+Jupyter notebooks
+esc				Cell select mode
+enter				Cell edit mode
+alt + windows + j		Merge the cell with next cell
+shift + alt + windows + j	Merge the cell with previous cell
+Ctrl + shift + -		Split cell into two at cursor
+
+
+
+Activate conda virtual environment on windows (git bash)
+$ source C:/Users/Zackary/miniconda3/Scripts/activate azure_venv
+
+# Install tmux plugin manager
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+tmux with my custom setup (<prefix> = C-Space)
+<prefix> |		Split screen horizontally
+<prefix> _		Split screen vertically
+C-d			Close currently selected pane
+<prefix> o		Toggle between screens
+<prefix> [              Copy mode (q to quit) (use vi bindings to copy and C-v to paste)
+<prefix> 0              Change window number
+<prefix> C->            Resize window
+<prefix> x y            Kill pane
+<prefix> c              New window
+<prefix> n              Next window
+<prefix> }              Swap pane positions
+<prefix> SPACE          Cycle pane positions
+<prefix> : break-pane -t :   Move current pane to new window
+<prefix> I		Install tpm plugins
+
+
+linux
+-----
+# Add symbolic link to make getting to getting windows documents/downloads easier (may want to rename to lowercase afterwards)
+$ ln -s /mnt/c/Users/Zackary/Downloads/ ~/windows
+$ ln -s /mnt/c/Users/Zackary/'OneDrive - FIDO Tech Ltd' ~/windows
+
+# Add an environment variable
+$ echo "export user_analysis_data_write='analysis'" >> ~/.profile
+
+# Bring up a previous command
+$ history | grep <keyword>
+$ !<line_number>:p
+
+# Delete  a folder and its contents
+$ rm -r <folder_name>
+
+# Add your user to group
+$ sudo usermod -aG <group> zbell
+
+# Make a file execuatble by any user
+$ chmod a+x <filename>
+
+# Obtain chmod code for existing file
+$ stat --format '%a' <filename>
+
+# Convert dos file to unix (line retruns)
+$ dos2unix in_file.txt out_file.txt
+
+> write to a file >> append to a file.
+
+# Copy env variable to clipboard
+echo $promchip_pswd | xclip -se c
+
+# Copy contents of a file to clipboard
+xclip -se c < ~/dev/nanopu/queries/sql/promethion/vw_production_clean_screen.sql
+
+# Find occurences of pattern in folder and all subfolders (-r) excluding binary files (-I) excluding folder (--exclude-dir=<foldername>)
+grep -rI <PATTERN> --exclude-dir=<foldername>
+
+# apt Installation - guppy example
+# Web page for repo:
+$ http://deb-repo.oxfordnanolabs.local/
+# Add the guppy repo to Ubuntu's list of sources
+# Does not work: $ sudo echo 'deb http://deb-repo.oxfordnanolabs.local/apt xenial non-free' >> /etc/apt/sources.list.d/ont.sources.list
+$ sudo su -c "echo 'deb http://deb-repo.oxfordnanolabs.local/apt xenial non-free' >> /etc/apt/sources.list.d/ont.sources.list"
+# Get the authentication keys to enable authenticated download from repo
+$ wget -O- http://deb-repo.oxfordnanolabs.local/roger.pettett@nanoporetech.com.key | sudo apt-key add -
+# Update your apt database of packages so that it reflects the inclusion of the new apt source above
+$ sudo apt-get update
+# Look for packages containing 'guppy'
+$ apt search guppy
+# Install the one you want
+$ sudo apt install ont-guppy-cpu
+
+
+String replace on all files containing search string (in git repo)
+$ git grep -l 'src.preprocess.signal' | xargs sed -i 's/src.preprocess.signal/src.preprocess.audio/g'
+$ git grep -l 'yml' | xargs sed -i 's/yml/yaml/g'
+$ git grep -l 'cursor_execute_sql' | xargs sed -i 's/cursor_execute_sql/execute_sql_statements/g'
+$ git grep -l 'astype(int)' | xargs sed -i 's/astype(int)/astype('Int64')/g'
+$ git grep -l 'sqc.standard_pore' | xargs sed -i 's/sqc.standard_pore/sqc.pore_batch/g'
+$ git grep -l 'from ....utils' | xargs sed -i 's/from ....utils/from nanopy.loaders.utils/g'
+$ git grep -l 'pr_flowcell' | xargs sed -i 's/pr_flowcell/item_pr_flowcell/g'
+$ git grep '^DROP TABLE' -- ~/dev/analysis-databases/prom_analysis_database/sql/procedures/usp_create_membrane_qc_lookup.sql | xargs sed -i 's/^DROP TABLE/d/g'
+$ git grep -l 'args.ascending' | xargs sed -i 's/args.ascending/not args.descending/g'
+
+When replacing a string which contains forward slashes (like paths to files), can use hashes or other non-alphabetic characters instead 
+git grep -l '/media/groups/development/stored/hburroughs/dev/chipdev-etl' | xargs sed -i 's#/media/groups/development/stored/hburroughs/dev/chipdev-etl#/media/groups/development/stored/cda/chipdev-etl#g'
+
+String replace on all files containing search string (DO NOT USE in git repo but fine to do in a local repo)
+$ grep -rl cursor_execute_sql . | xargs sed -i 's/cursor_execute_sql/execute_sql_statements/g'
+$ grep -rl "analysis_data " . | xargs sed -i 's/analysis data /analysis_data_prom /g'
+
+List all .txt files in file glob (ensure you have shopt in .profile)
+$ find ~/dev/nanopy/*.txt
+
+Install nanopass into venv
+$ venv/bin/python -m pip install --no-deps nanopass --extra-index-url='https://pypi.oxfordnanolabs.local' --trusted-host pypi.oxfordnanolabs.local
+
+BUILD nanopass
+~/dev/nanopass$ sudo python setup.py install --user
+
+BUILD chipdev-etl
+~/dev/chipdev-etl$ source venv/bin/activate
+~/dev/chipdev-etl$ pip install --upgrade .
+
+#Z-addition############
+#Command to show git branches and their description in command line from https://stackoverflow.com/questions/15058844/print-branch-description
+
+#Add following to .bashrc
+alias git-describe-branches='for line in $(git branch); do 
+     description=$(git config branch.$line.description)
+     if [ -n "$description" ]; then
+       echo "$line     $description"
+     fi
+done'
+#######################
+
+git
+Information about branch
+git status
+git log                                     Lists commits to local repository
+git log origin/master ..HEAD                Lists commits that have not been pushed to remote repository
+git log <branchname> --not master           Lists commits on <branchname> excluding commits to master
+git cherry -v master                        Lists commits that have not been merged into master
+git clean -f -n  --                         Lists untracked files that git clean would delete (e.g. use when you unintentionally have an untracked file in master that you want to delete)
+git config branch.<branchname>.description  Shows description of branch (use "git branch --edit-description" to enter description)
+git diff --stat <branchname>                Shows merge-like file-change stats
+git diff -- '*.c'                           git diff with results restricted to file glob
+git checkout --merge <branchname> <filename> Unstage changed file from files-for-commit
+git log --follow <file>                     Show commit history of <file> with hashes
+git log --diff-filter=D --summary           Show all commits that deleted a file
+git diff branch1:file branch2:file          Diff two files
+git checkout $commit~1 filename             Restore file (filename) from commit ($commit)
+
+Typical workflow (Whenever making a new branch, make sure you're in master and do a git pull!)
+git checkout master               Move to local master branch
+git pull                          Sync local master with remote master
+git checkout -b <branchname>      Create branch and move to it
+git branch --edit-description     Add a brief description of branch (opens nano editor: type description; C-o, C-x to save and exit)
+... edit files ...
+git status                        View a summary of files that have changed
+git diff                          View a diff of files in working directory and staging (staging is = master at this point)
+git add <filename>                Add <filemname> to staging (area in local repository holding files to be committed)
+... Or, if multiple files use -a ...
+git add -a                        Add all files that have changed to staging
+git diff                          View a diff of files in working directory and staging (staging is same as files in branch and diff will be nothing at this point)
+git diff master                   View a diff of files in working directory and local master (will return the same results as runing 'git diff' before we did 'git add')
+git commit –m “message”           Commit staged files to branch
+git push –u origin <branchname>   Push branch to remote repository
+... go to git.oxfordnanolabs.local and create WIP: merge request
+
+git checkout master               Move to local master branch
+git pull                          Sync local master with remote master
+git checkout -b <branchname>      Create branch and move to it
+git branch --edit-description     Add a brief description of branch
+... edit files ...
+git status                        View a summary of files that have changed
+git diff                          View a diff of files in working directory and staging (staging is = master at this point)
+git add <filename>                Add <filemname> to staging (area in local repository holding files to be committed)
+... Or, if multiple files use -a ...
+git add -a                        Add all files that have changed to staging
+git diff                          View a diff of files in working directory and staging (staging is same as files in branch and diff will be nothing at this point)
+git diff master                   View a diff of files in working directory and local master (will return the same results as runing 'git diff' before we did 'git add')
+git commit –m “message”           Commit staged files to branch
+git push –u origin <branchname>   Push branch to remote repository
+
+More standard workflow commands
+git checkout <filename>           Discards edits in file and revert to original
+git reset HEAD <filename>         Reverts file that was staged for commit and to original
+git pull                          Syncs local master or local branch you are in with the repository version
+git branch                        Lists local branches
+git branch -a                     Lists all local and remote branches
+git branch -d <branchname>        Deletes branch (can't do this wjhile in the branch you are deleting; do this while in master)
+git branch <branchname>           Creates branch (make sure you are in local master and have 'git pull'ed)
+git checkout <branchname>         Moves to branch
+git checkout -b <branchname>      Creates branch and switch to it
+git add <filename>                Add <filemname> to staging (area in local repository holding files to be committed)
+git add -a                        Add all files that have changed to staging
+git commit –m “message”           Commit staged files to branch
+git push –u origin <branchname>   Push branch to remote repository
+
+Merge updated master into an existing branch
+git checkout master
+git pull
+git checkout your_branch_name
+git merge master
+… resolve any git (by editing conflicted_files)
+git add conflicted_file (do for all conflict resolved files)
+git commit -m "Resolved merge conflict by incorporating both suggestions." (or other appropriate suggestion)
+git push -u origin your_branch_name (this is a standard update and your branch in git lab will show you have merged in master)
+
+
+Remove a pushed commit
+git log --pretty=oneline --abbrev-commit View commits
+git rebase -i HEAD~2                     Lists commits upto two parents above - delete lines detailing comits you want to remove
+git push origin +<branchname>            Apply changes to ,branchname> in remote repository
+
+
+git undos  (https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified) NB HEAD~ = the parent of HEAD.
+   git branch ---> H~
+or git commit ---> H~                    edit ---> W              add ---> S                  commit ---> H
+                   H~ <--- reset --hard HEAD~      W <--- reset HEAD~      S <--- reset --soft HEAD~      H
+
+git reset --soft HEAD~            Undoes last git commit
+git reset HEAD~                   Undoes last commit and git add
+git reset --hard HEAD~            Undoes last commit and git add and destorys any edits made to working directory
+git commit --amend                Adds changes to the last commit that were made after the last commit
+git reset HEAD <file>             Unstage a file. NB Calling git reset without an option is not dangerous - it only touches your staging area.
+git checkout -- <file>            Revert <file> back to as it was after the last commit
+git checkout -- .                 Revert all files back to as it was after the last commit
+
+#Z-addition
+git reset --hard master@{"10 minutes ago"}     reset to a particular point in time
+
+Undo a commit that has not been pushed
+git reset HEAD~                   First time will uncommit most recent commit made
+git reset HEAD~                   second time will uncommit second most recent commit made etc.
+
+Made some edits while in the wrong by mistake and want to transfer them to a different branch?
+git reset HEAD~                   OPTIONAL - only need to do this if you had also commited the file.
+git stash                         Stash changes (while in master)
+git checkout <branchname>         Move to branch (first do ‘git branch <branchname>’ if branch does not already exist)
+git stash apply                   Apply changes in latest push to stash to current branch
+
+#Z-addition
+git stash			  Add changes to a stash list without commiting them (so you can change branches)
+git stash list			  See list of everything you have git stashed
+git stash clear                   Remove everything from your git stash list
+git stash drop stash@{index}      Drop something specific from your git stash (get the index from git stash list)
+git stash apply stash@{N}         Apply Nth entry in the stash  
+
+Want to copy a file from one branch to another
+git checkout <branchname> <filename>          This will add the file to your staging area - remove it from staging to avoid commiting it
+
+Want to copy a file from one branch to another
+git checkout --merge <branchname> <filename>  Whilst in branch you want file to be copied to. <branchname> <filename> specify the source branch and path-name of fiel to be copied
+                                              If you didn't want the copied file to affect the version of the file already in the branch, copy it and undo the changes made by the --merge
+cp <filename> <new_filename>                  Copy it
+git reset HEAD <filename>                     Unstage changed file from files-for-commit
+git checkout <filename>                       Discards edit from unstaged file
+
+Undo changes pushed to remote
+... Whilst in branch ...
+git checkout master --<filename>  Replaces <filename> with the copy of <filename> in master. Followed by git add, git commit, git push, this is a way of un-doing pushed changes.
+
+Example of git rebase
+git checkout 20191122_1
+git rebase master
+git push -f origin 20191122_1
+
+# Pushed commit(s) to wrong remote branch
+# For example, you wrongly entered:
+# git push -u origin 20191119_1
+# instead of:
+# git push -u origin 20191119_2
+# Fix it with:
+git push -f origin 618946a44f826a5103725059aefed882f54a57b6:20191119_1
+git push -f origin <Last_known_good_commit>:<branchname_wrongly_pushed_to>
+
+?? Undo changes mistakenly pushed remote master by mistake and want to revert back to version of /origin/master prior to pushing changes?
+git reset --hard HEAD^            Reset to original master (while in master). This will kill the contents of master?
+git pull                          Syncs local master or local branch you are in with the repository version
+
+??
+git add -u  If you have pushed a file and decide you no longer want to push the file. Delete the file and run this command
+git branch --set-upstream-to=origin/trout-1172 trout-1172   Tell my local branch there’s a branch in the remote repository.
+git fetch                   Git remote branchs
+git checkout <branchname>   Switch to branch
+You may need to ‘git pull’ in the branch you’re working first to make your branch aware of the already existing branch in the remote repository
+
+git clean -f  -- deletes all untracked files in branch
+
+Get a copy of the previous version of file:
+git log --follow <file>  show commit history of <file> with hashes
+git show <commit_hash>:<file> > <folder/dest_file>
+
+Remove all branches in local that have been merged into master - these exclude branches that were from remote deleted when or after merging into remote/master
+
+git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d
+
+Remove all branches in local that have gone from from remote branch - these include branches that were merged into master but deleted when or after merging
+
+git branch -vv | grep ': gone]'|  grep -v "\*" | awk '{ print $1; }' | xargs -r git branch -d
+
+
+# Delete all local branches that have been merged into main
+$ git checkout main
+$ git pull origin main
+$ git fetch --prune									# Clean up any stale remote-tracking references
+$ git branch --merged origin/main							# Show branches merged into main
+$ git branch --merged origin/main | egrep -v "(^\*|main)" | xargs git branch -d 	# main and current branch not deleted
+$ git branch										# verify they've been deleted
+
+
+
+
+
+
+
+
+
+# Issue (obtained  from https://stackoverflow.com/questions/4254389/git-corrupt-loose-object)
+$ git status
+error: object file .git/objects/cc/cd80179e22a5440ccde65b9995c92232889d68 is empty
+error: object file .git/objects/cc/cd80179e22a5440ccde65b9995c92232889d68 is empty
+fatal: loose object cccd80179e22a5440ccde65b9995c92232889d68 (stored in .git/objects/cc/cd80179e22a5440ccde65b9995c92232889d68) is corrupt
+# Fix
+$ cp -R nanopy nanopy-backup
+$ git clone git@git.oxfordnanolabs.local:traque/nanopy.git nanopy-newclone
+$ rm -rf nanopy/.git
+$ mv nanopy-newclone/.git nanopy
+$ rm -rf nanopy-newclone
+
+If the above does not fix the issue, try this
+rm -fr .git
+git init
+git remote add origin [your-git-remote-url]
+git fetch
+git reset --mixed origin/master
+git branch --set-upstream-to=origin/master master
+
+
+
+MYSQL
+
+# 1. Setup root user to use 'mysql_native_password' to overcome issue on new installations: http://stackoverflow.com/questions/39281594/error-1698-28000-access-denied-for-user-rootlocalhost
+
+$ sudo mysql -u root
+
+mysql> USE mysql;
+mysql> SELECT User, Host, plugin FROM mysql.user;
+
++------------------+-----------------------+
+| User             | plugin                |
++------------------+-----------------------+
+| root             | auth_socket           |
+| mysql.sys        | mysql_native_password |
+| debian-sys-maint | mysql_native_password |
++------------------+-----------------------+
+
+$ sudo mysql -u root # I had to use "sudo" since is new installation
+
+mysql> USE mysql;
+mysql> UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+mysql> FLUSH PRIVILEGES;
+mysql> exit;
+
+$ service mysql restart
+
+# 2. Create a new databasea and Grant permissions to an existing user
+
+n$ sudo mysql -u root
+
+mysql> CREATE DATABASE analysis_data_voltrax;
+mysql> GRANT ALL PRIVILEGES ON analysis_data_voltrax.* to 'hburroughs'@'localhost' IDENTIFIED BY '';
+mysql> FLUSH PRIVILEGES;
+mysql> exit;
+
+# 3. General commands
+source ~/dev/analysis-databases/analysis_database/sql/views/deploy_sql_views.sql;
+source ~/dev/analysis-databases/analysis_database/sql/procedures/deploy_sql_procedures.sql;
+show processlist;
+-u root -p kill 5
+system grep "having" ~/.mysql_history
+
+# Indices
+CREATE INDEX ix_platform_qc_run_flowcell_id_run_n ON analysis_data_prom.platform_qc_run (flowcell_id, run_n);
+CREATE INDEX ix_flowcell_manufacture_if_flowcell_barcode_f ON flowcell_manufacture (if_flowcell_barcode_f);
+ALTER TABLE {table_name} ADD PRIMARY KEY ({index_fields})
+SHOW INDEX FROM <table_name>;
+DROP INDEX <index_name> ON <table_name>;
+
+# TABLES
+
+# Create back copy of data
+CREATE TABLE seq_metrics_bu AS SELECT * FROM seq_metrics;
+
+# Create back copy of data (retaining primary keys and comments)
+CREATE TABLE flowcell_bu LIKE flowcell
+INSERT flowcell_bu SELECT * FROM flowcell;
+
+CREATE TABLE tb_production LIKE vw_production;
+INSERT tb_production SELECT * FROM vw_production;
+
+CREATE TABLE log_table_row_counts (id int(11) NOT NULL auto_increment, table_name varchar(100), run_mode varchar(255), stage varchar(255), row_count int(11), created_datetime timestamp, PRIMARY KEY (id));
+CREATE TABLE seq_metrics_bu AS SELECT * FROM seq_metrics;
+
+RENAME TABLE <table_name> TO <new_table_name>;
+DROP TABLE IF EXISTS <table_name>;
+
+CREATE TABLE channel_metrics_platform_qc_tba3 AS SELECT * FROM channel_metrics_platform_qc_tba;
+CREATE TABLE AS channel_metrics_platform_qc_tba  SELECT * FROM channel_metrics_platform_qc_tba3 UNION ALL SELECT * FROM channel_metrics_platform_qc_tba8;
+
+# Table details
+SHOW COLUMNS FROM <table_name>;
+SHOW FULL COLUMNS FROM <table_name>; (to see comments/ field descriptions)
+DESCRIBE <table_name>;
+
+# Alter table content
+ALTER TABLE <table_name> ADD <column_name> <storage_type> AFTER <existing_column_name>;
+ALTER TABLE mux_scan ADD multiplexing_group_2_correct Int(11);
+ALTER TABLE <table_name> DROP <column_name1>, DROP <column_name2>, ...;
+ALTER TABLE <table_name> DROP COLUMN <column_name>;
+UPDATE <table_name> SET multiplexing_group_2_correct = multiplexing_group_3;
+ALTER TABLE <table_name> MODIFY <column_name> SMALLINT
+ALTER TABLE <table_name> CHANGE COLUMN <column_name> <column_name> VARCHAR(255) NOT NULL;
+
+
+# Remove rows
+DELETE FROM pore_insertion_extension WHERE logged<="2016-12-31";
+
+# Views
+SHOW FULL TABLES IN analysis_data WHERE TABLE_TYPE LIKE 'VIEW';
+SHOW CREATE VIEW; (view view)
+DROP VIEW IF EXISTS vw_chained_workflow;
+
+# Procedures
+DROP PROCEDURE <procedure_name>
+SHOW PROCEDURE STATUS; (list stored procedures)
+SHOW CREATE PROCEDURE; (view stored procedure code)
+
+# Table update examples
+UPDATE calculated_columns_vw_production SET
+cgi_created_weeks_ago = cgi_created_weeks_ago + 1,
+cc_created_weeks_ago = cc_created_weeks_ago + 1,
+cp_created_weeks_ago = cp_created_weeks_ago + 1,
+fb_created_weeks_ago = fb_created_weeks_ago + 1,
+fcc_created_weeks_ago = fcc_created_weeks_ago + 1,
+qc_created_weeks_ago = qc_created_weeks_ago + 1,
+fi_created_weeks_ago = fi_created_weeks_ago + 1,
+fcd_created_weeks_ago = fcd_created_weeks_ago + 1,
+p1_exp_start_time_weeks_ago = p1_exp_start_time_weeks_ago + 1,
+p2_exp_start_time_weeks_ago = p2_exp_start_time_weeks_ago + 1,
+p1c_exp_start_time_weeks_ago = p1c_exp_start_time_weeks_ago + 1
+WHERE if_created < "2021-04-07";
+UPDATE platform_qc SET p_run_internal = "int", pqc_runner = "IntPQC" WHERE p_remote_addr LIKE '10.140.2%';
+UPDATE membrane_qc SET m_run_internal = "int", mqc_runner = "IntMQC" WHERE m_remote_addr LIKE '10.140.2%';
+UPDATE seq_metrics SET run_internal = "int", runner = "Int" WHERE remote_addr LIKE '10.140.2%';
+UPDATE mux_scan SET run_internal = 0, runner = "Int" WHERE remote_addr LIKE '10.140.2%';
+UPDATE multi_class_pi_type AS mc
+INNER JOIN platform_qc_run AS p ON mc.run_id = p.run_id
+SET mc.flowcell_id = p.flowcell_id, mc.logged = p.logged;
+WHERE remote_addr LIKE '10.140.2%'
+
+# Lowercase query
+SELECT * FROM platform_qc_run WHERE flowcell_id LIKE 'pa%' AND flowcell_id COLLATE UTF8_BIN = LOWER(flowcell_id COLLATE UTF8_BIN);
+
+# COMMAND LINE (Examples)
+# Query database, convert to csv and save to a csv file
+$ mysql_analysis_data -B -e "<SQL_QUERY_TEXT>;" | to_csv > /media/sf_hburroughs/20170703_RAL_temp_humidity.csv
+Or
+$ mysql_analysis_data < query.sql | to_csv > /media/sf_hburroughs/20170703_RAL_temp_humidity.csv
+
+# Execure SQL from CLI by running mysql in batch/ non-interactive mode
+$ mysql_analysis_data -e "source ~/dev/analysis-databases/analysis_database/sql/procedures/<PROCEDURE_NAME>;"
+Or
+$ mysql_analysis_data < file_containing_sql.sql
+
+"to_csv() {
+    sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"
+}
+
+export -f
+" >> ~/.bash_functions
+
+
+regex
+pattern = '_(?!.*_)' Finds last occerence of '_'
+
+python:
+
+pandas settings
+pd.set_option('display.max_seq_items', 200)
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 100)
+pd.set_option('display.width', 200)
+pd.set_option('display.max_colwidth', 50)
+pd.set_option('precision', 2)
+pd.set_option('display.max_seq_items', 2000)
+
+# import a module from another project - extend python path:
+import sys
+sys.path.append('/home/hburroughs/dev/dotpy')
+from hb_utils import save_dataframe_as_list_of_dicts
+
+# import a module from another project - extend python path in virtualenv by adding a .pth file listing foldwers to include
+echo '/home/hburroughs/dev/nanopu' > venv/lib/python2.7/site-packages/nanopu.pth
+
+# display PYTHONPATH
+$ python -c "import sys; print(sys.path)"
+
+# Issue with nanopy make install not working
+Install dependencies
+$ sudo pip install -r requirements.txt
+This failed flagging error associated with freetype. So install freetype; install dependencies and retry make install worked:
+$ sudo apt install libfreetype6-dev pkg-config
+$ sudo apt update
+$ sudo pip install -r requirements.txt
+$ make install
+
+# Updating nanopy - To reflect changes - run (sudo is not needed if working in venv)
+(venv) $ python setup.py install
+
+# Updating nanopass - To make changes to take effect run
+$ sudo python setup.py install --user
+
+# temproarily add another path to $PYTHONPATH
+$ export PYTHONPATH=$PYTHONPATH:/home/hburroughs/dev/dotpy
+
+# Run unittest:
+$ python -m unittest test.loaders.analysisdb.tables.prom.test_table_sequencing_run
+$ python -m unittest test.loaders.analysisdb.test_table_spec_fragments
+$ python -m unittest test.grab.test_transforms.TestSummariseListOfDicts
+$ python -m unittest test.grab.test_transforms.TestUnpackSeriesOfDictsToDataFrame
+
+# Run dbloader:
+$ ./netl/bin/load_analysis_db_tables.py --days 7 --tables sequencing_run --destination analysis_data_prom --live  --upsert
+./load_analysis_db_tables.py --days 1 --tables membrane_qc --destination analysis_data_prom --upsert --live
+
+view alias command
+$ type mysql_sawtooth
+
+Copy source folder and contents to (new) destination folder
+$ cp -R source destination/
+
+Create a Symbolic link to shared folder in usual working directory (~/dev)
+$ ln -s /media/sf_<your_username>/<folder_name> ~/dev/<folder_name>
+
+# Ubuntu settings
+
+# Fix DNS server issue by overriding dns server 10.0.2.2
+1. Edit
+Add line:
+supersede domain-name-servers <dns_ip_address1>,<dns_ip_address2>;
+e.g.
+supersede domain-name-servers 10.160.100.31, 10.142.76.20
+
+to file:
+$ sudo emacs /etc/dhcp/dhclient.conf
+
+2. Reboot network manager
+$ sudo service network-manager restart
+
+3. Check result:
+$ systemd-resolve --status
+
+May need to reboot for it to really take effect
+
+Disable screen lock
+$ gsettings set org.gnome.desktop.screensaver lock-enabled false
+
+[alias]
+    lg = !"git lg1"
+    lg1 = !"git lg1-specific --all"
+    lg2 = !"git lg2-specific --all"
+    lg3 = !"git lg3-specific --all"
+
+    lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+    lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+
+# zip files
+$ zip -r -j destination_file.zip source_folder/*   # Create zip of director and its contents
+$ less destination_file.zip                        # list file contents of zip file
+
+# Mongo cli commands
+> show dbs
+> show collections
+> db.getCollectionNames()
+> printjson(db.getCollectionNames())
+> db.membrane_qc.getIndexes()
+> db.membrane_qc.count()
+> db.membrane_qc.find({}, {_id: 0, logged: 1}).sort({_id: -1}).limit(1)                                                          # latest entry in collection
+> db.membrane_qc.aggregate([{$sort:{_id: -1}}, {$limit: 1}, {$project: {logged: 1}}])                                            # latest entry in collection
+> db.membrane_qc.aggregate([{$group: {_id: null, min_logged: {$min: "$logged"}}}])                                               # latest entry in collection
+> db.membrane_qc.find().sort({'_id':1}).limit(1).forEach(function(doc){Object.keys(doc).forEach(function(key){allKeys[key]=1})}) # show field names in single record
+
+# Run a query in the cli on a collection in grouper_ping
+$ mongo_prod grouper_ping  --eval "db.getCollectionNames()"
+
+# Run a query in .js file on a collection in grouper_ping
+$ mongo_prod grouper_ping ~/dev/ubuntu_vm/mongo/showCollections.js
+
+Recursive listing of directory contents
+ls -R | awk '
+/:$/&&f{s=$0;f=0}
+/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
+NF&&f{ print s"/"$0 }' > file_listing.txt
+
+Markdown
+Slack
+*Bold*
+_italics_
+~strikethrough~
+> quote 1 sentence
+>>> quote 1+ sentences
+
+git
+**Bold**
+__italics__
+
+
+#Find instance of some string in a directory
+grep -rl "..." path/to/directory
+
+#Force git pulls when having to run in notebooks but edit in IDE
+$git fetch origin master
+$git reset --hard FETCH_HEAD
+$git clean -df
+
+#Deploy views
+$mysql_bash_aliases < path/to/view.sql (e.g. mysql_chip_dev_rw_prom < nanopu/sql/chip_dev/promethion/views/vw_production_investigation.sql)
+
+#Stop docker images if nothing else works
+$sudo aa-remove-unknown
+$docker stop <container_name>
+
+# Remove commits from git history
+$git rebase -i {last good commit}
+This will bring up a text editor with all commits after this. Delete the commits you don't want from the text file and save.
+$git push -f
+Note that you may have to allow forced pushes on the branch first like when you're doing it on master 
+
+# Execute .bash_aliases or .profile from command line
+$ source .profile
+or
+$ source ~/.profile
+
+# If give status gives error like this "fatal: sha1 file '/media/sf_stored/chipdev-etl/.git/index.lock' write error: Protocol error", then do following
+$ rm -f .git/index.lock
+
+# Install miniconda from command line
+$ mkdir -p ~/miniconda3
+$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+$ bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+$ rm -rf ~/miniconda3/miniconda.sh
+$ ~/miniconda3/bin/conda init bash
+
+# Add python path in conda environment
+Ensure conda-build is installed (do so in base)
+$ conda install conda-build
+Activate virtual environment
+$ conda activate {venv}
+Add folder to conda development path
+$ conda develop {path/to/directory}
+
+# Make a conda environment from a requirements.yml
+$ conda env create -f requirements.yml
+
+# Installing specific versions with pip
+$ pip install dvc==2.58.2
+$ pip install 'dvc>=2.58.2'
+$ pip install 'dvc<=2.58.2'
+$ pip install -U dvc			(newest version of dvc)
+
+# Copy stuff from Downloads directory in Windows over to WSL
+$ sudo cp /mnt/c/Users/Zackary/Downloads/model_ensemble.tar.gz Downloads/model_ensemble.tar.gz
+
+# Configure git (for GitHub)
+$ git config --global user.name "zbfido"
+$ git config --global user.email zbell@fido.tech
+
+# Store git credentials such that you don't have to log in everytime you use https
+$ git config --global credential.helper store
+
+# Set VS code to be git editor
+$ git config --global core.editor "code --wait"
+
+# Find number of non-empty subdirectories in a directory (removed -not to get number of empty subdirectories)
+$ find . -mindepth 1 -maxdepth 1 -not -empty -type d
+
+# Change terminal output for mysql
+$ pager less -S
+# Change it back (not correct command but works anyway)
+$ pager 
+
+# Undo a local git merge (i.e. from main to a development branch)
+$ git merge --abort
+
+# Reset branch to previous commit (use with caution as it will delete stuff)
+$ git log			(find commit sha that you want to revert to)
+$ git reset --hard dfc7cba0d4362a61bed7b2ff04e12d0808fe71d2
+
+# Clean/delete all untracked stuff (stuff in .gitignore not affected)
+$ git clean -n -f -d			(-n shows what will be deleted but doesn't actually delete, -f means files, -d means directories)
+
+# When bash dies (killed) when pip installing
+$ pip install <your-package-name> --no-cache-dir
+
+# Azure functions on specific port (need to be in directory of specific function app I believe and need top be using associated venv)
+$ func host start --port 7073				(embeddings)
+$ func host start --port 7071				(virtual_leakage_assistant)
+
+# Start azurite without clicking on it in vs code
+crtl + shift + p  ->  azurite start {} service
+		      
+# Azure cli
+$ az storage blob list --account-name fidoblobs --container-name correlation --auth-mode login
+$ az role assignment list --assignee zbell@fido.tech
+$ az account show --output yaml
+$ az account show --query name
+
+# Pytest
+$ python -m pytest 			# Sets whatever directory you're in as the python path
+
+# Add Azure blob storage as DVC remote (need actual connection string which could be an environment variable or something)
+$ dvc remote add -d fai-dvc-remote azure://dvc
+$ dvc remote modify --local fai-dvc-remote '$CONNECTION_STRING'
+
+
+
+
+# Left to do
+>) Set up Azure cli and Azure storage explorer (done storage explorer)
+>) Decide and set up how I want to interact with SQL databases (done: staying with harlequin)
+>) Set up tmux (done but not fine tuned)
+>) Get micro as default text editor to use with midnight commander and git and upgrade with vscode keybinds + colour scheme
+>) Version control tmux dotfiles and any others
+>) Set up oh-my-bash or similar to make me look like a 10x dev (still want conda env shown at the side though)
+>) Get GitHub copilot again or Jetbrains AI copilot (Codeium AI doesn't work with Jupyter Notebooks)
+>) Move over bash custom functions and make them compatible with mc (done but struggling with getting fp to work with mc)
+>) Make custom functions so that tmux and mc play nicely (done but not fine tuned - still need to gain experience with them first)
+
+>) Move any local code on old laptop to new one (done)
+>) Move over any files that are on old laptop to new one (done)
+>) Need to find or make commands to run python scripts from editor and debugging so I don't have to use mouse (Can do with VScode easily)

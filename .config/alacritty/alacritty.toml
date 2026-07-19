@@ -1,0 +1,11 @@
+[window]
+title = "Alacritty"
+option_as_alt = "both"
+
+[shell]
+program = "/bin/bash"
+args = ["--login", "-i"]
+
+[font.normal]
+family = "FiraMono Nerd Font"
+style = "Regular" 

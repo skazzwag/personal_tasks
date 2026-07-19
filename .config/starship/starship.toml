@@ -1,0 +1,71 @@
+# Starship config for analytics engineering
+
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Timeout for starship to scan files (milliseconds)
+scan_timeout = 30
+
+# Format prompt
+format = """
+(bold blue)$directory$git_branch$git_status
+(bold blue)$character"""
+
+# Disable the blank line at the start of the prompt
+add_newline = false
+
+[character]
+success_symbol = "[ ❯](green)"
+error_symbol = "[ ❯](bold red)"
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+style = "bold cyan"
+format = "[ $path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = "\uf408 "
+format = "on [$symbol$branch]($style) "
+style = "green"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold yellow"
+conflicted = "🏳"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+up_to_date = ""
+untracked = "?${count}"
+stashed = "$${count}"
+modified = "!${count} "
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[python]
+symbol = " "
+disabled = false
+format = 'via [${symbol}${pyenv_prefix}(${version} )]($style)'
+style = "yellow"
+detect_extensions = ['py']
+detect_files = ['pyproject.toml', 'uv.lock', 'requirements.txt', ".python-version"]
+
+# Show command duration for long-running queries
+[cmd_duration]
+min_time = 1_000
+format = "took [$duration]($style) "
+style = "bold yellow"
+
+# Useful for seeing current time (helpful for logging)
+[time]
+disabled = false
+format = '🕙 [$time]($style) '
+time_format = "%T"
+style = "bold dimmed white"
+
+# # Optional: Docker (if you use containerized databases)
+# [docker_context]
+# symbol = " "
+# format = "via [$symbol$context]($style) "
