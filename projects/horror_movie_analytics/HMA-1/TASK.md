@@ -1,0 +1,1 @@
+Move gm_analytics from codeberg back to GitHub keeping git history
