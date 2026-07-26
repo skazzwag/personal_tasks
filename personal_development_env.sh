@@ -122,6 +122,8 @@ cd ~
 # Install starship
 curl -sS https://starship.rs/install.sh | sh
 
+# Install direnv
+sudo apt install direnv
 
 # Install GNU stow for dotfile syncing dotfiles (do at the end!)
 sudo apt install stow
