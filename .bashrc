@@ -153,9 +153,9 @@ fi
 eval "$(uvx --generate-shell-completion bash)"
 eval "$(uv generate-shell-completion bash)"
 
-# Set editor to VScodium
-export EDITOR="codium --wait"
-export VISUAL="codium --wait"
+# Set editor to fresh
+export EDITOR="fresh --wait"
+export VISUAL="fresh --wait"
 
 # DuckDB alias
 alias duckdb="~/.duckdb/cli/latest/./duckdb"
@@ -164,8 +164,8 @@ alias duckdb="~/.duckdb/cli/latest/./duckdb"
 export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
 eval "$(starship init bash)"
 
+# Direnv to make env variables per project easy
+eval "$(direnv hook bash)"
+
 # opencode
 export PATH=/home/zak/.opencode/bin:$PATH
-
-# Alias for running function to make a note in PostgreSQL database
-alias nfg='ENCRYPTED_FILE=~/.secrets/postgres_connection.gpg GPG_RECIPIENT=2BCBECF6FD3426BEB17436B42C04C3A5719C2861 ~/GitHub/never_forgets/nfg.sh'
