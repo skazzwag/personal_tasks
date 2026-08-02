@@ -1,0 +1,3 @@
+jira_api_username: ${JIRATUI_USERNAME}
+jira_api_token: ${JIRATUI_API_TOKEN}
+jira_api_base_url: ${JIRATUI_BASE_URL}
