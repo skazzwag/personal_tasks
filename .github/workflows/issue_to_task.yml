@@ -98,4 +98,4 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add projects/${{ steps.project_dir.outputs.PROJECT_DIR }}/${{ steps.generate_number.outputs.PROJECT_CODE }}/TASK.md
           git commit -m "Add task for ${{ steps.generate_number.outputs.PROJECT_CODE }}: ${{ github.event.issue.title }}"
-          git push origin main
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git main
