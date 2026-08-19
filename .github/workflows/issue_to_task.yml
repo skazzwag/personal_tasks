@@ -1,0 +1,101 @@
+name: Convert Issue to Project Task
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-task-from-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Extract Project Prefix
+        id: extract
+        run: |
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          PROJECT_PREFIX=$(echo "$ISSUE_TITLE" | grep -oE '^[A-Z]+' | head -1)
+          if [ -z "$PROJECT_PREFIX" ]; then
+            echo "No project prefix found in issue title."
+            echo "PROJECT_PREFIX=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "PROJECT_PREFIX=$PROJECT_PREFIX" >> $GITHUB_OUTPUT
+
+      - name: Get Project Directory from CSV
+        id: project_dir
+        run: |
+          PROJECT_PREFIX="${{ steps.extract.outputs.PROJECT_PREFIX }}"
+          if [ -z "$PROJECT_PREFIX" ]; then
+            echo "PROJECT_DIR=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          PROJECT_DIR=$(awk -F',' -v prefix="$PROJECT_PREFIX" '$1 == prefix {print $2}' .github/project_mapping.csv)
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Auto-Generate Issue Number
+        if: steps.project_dir.outputs.PROJECT_DIR != ''
+        id: generate_number
+        run: |
+          PROJECT_DIR="${{ steps.project_dir.outputs.PROJECT_DIR }}"
+          PROJECT_PREFIX="${{ steps.extract.outputs.PROJECT_PREFIX }}"
+          LAST_NUMBER=$(ls projects/$PROJECT_DIR/ 2>/dev/null | grep -oE "${PROJECT_PREFIX}-[0-9]+" | cut -d'-' -f2 | sort -n | tail -1 || echo "0")
+          NEW_NUMBER=$((LAST_NUMBER + 1))
+          echo "NEW_NUMBER=$NEW_NUMBER" >> $GITHUB_OUTPUT
+          echo "PROJECT_CODE=${PROJECT_PREFIX}-${NEW_NUMBER}" >> $GITHUB_OUTPUT
+
+      - name: Close Issue if Project Code Not Found
+        if: steps.project_dir.outputs.PROJECT_DIR == ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = ${{ github.event.issue.number }};
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              state: 'closed'
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: 'This issue was automatically closed because the project prefix in the title does not match any entry in the project mapping CSV file. Please use a valid project prefix (e.g., HMA, PROJ, DATA).'
+            });
+
+      - name: Create Project and Task Directory
+        if: steps.project_dir.outputs.PROJECT_DIR != ''
+        run: |
+          mkdir -p projects/${{ steps.project_dir.outputs.PROJECT_DIR }}/${{ steps.generate_number.outputs.PROJECT_CODE }}
+
+      - name: Create TASK.md File
+        if: steps.project_dir.outputs.PROJECT_DIR != ''
+        run: |
+          cat > projects/${{ steps.project_dir.outputs.PROJECT_DIR }}/${{ steps.generate_number.outputs.PROJECT_CODE }}/TASK.md << 'EOF'
+          # Task: ${{ github.event.issue.title }}
+
+          **Issue Number:** ${{ steps.generate_number.outputs.NEW_NUMBER }}
+          **Project Code:** ${{ steps.generate_number.outputs.PROJECT_CODE }}
+          **Project:** ${{ steps.project_dir.outputs.PROJECT_DIR }}
+
+          **Description:**
+          ${{ github.event.issue.body }}
+
+          **Created:** ${{ github.event.issue.created_at }}
+          **Author:** ${{ github.event.issue.user.login }}
+          **Labels:** ${{ join(github.event.issue.labels.*.name, ', ') }}
+
+          **Link:** [View Issue](${{ github.event.issue.html_url }})
+          EOF
+
+      - name: Commit and Push TASK.md to Main
+        if: steps.project_dir.outputs.PROJECT_DIR != ''
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add projects/${{ steps.project_dir.outputs.PROJECT_DIR }}/${{ steps.generate_number.outputs.PROJECT_CODE }}/TASK.md
+          git commit -m "Add task for ${{ steps.generate_number.outputs.PROJECT_CODE }}: ${{ github.event.issue.title }}"
+          git push origin main
