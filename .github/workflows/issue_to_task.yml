@@ -90,7 +90,7 @@ jobs:
 
           **Link:** [View Issue](${{ github.event.issue.html_url }})
           EOF
-          
+      
       - name: Commit and Push TASK.md to Main
         if: steps.project_dir.outputs.PROJECT_DIR != ''
         run: |
@@ -98,5 +98,17 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add projects/${{ steps.project_dir.outputs.PROJECT_DIR }}/${{ steps.generate_number.outputs.PROJECT_CODE }}/TASK.md
           git commit -m "Add task for ${{ steps.generate_number.outputs.PROJECT_CODE }}: ${{ github.event.issue.title }}"
-          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+      
+          # Set up SSH
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      
+          # Push using SSH
+          git remote set-url origin git@github.com:${{ github.repository }}.git
           git push origin main
+      
+      - name: Clean Up SSH Key
+        if: always()
+        run: rm -rf ~/.ssh
