@@ -150,6 +150,9 @@ gh-dash --config path/to/config.yml
 - `a`: Assign issue
 - `C`: Close issue
 
+#### View Switching
+- `s`: Switch between PRs and Issues views
+
 #### General
 - `?`: Show help
 - `q`: Quit
