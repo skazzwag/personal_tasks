@@ -210,6 +210,7 @@ eval "$(starship init bash)"
 # Direnv to make env variables per project easy
 eval "$(direnv hook bash)"
 
-# Add to PATH
+# Additions to PATH
 export PATH=$HOME/.opencode/bin:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
+export PATH='/home/zak/.hunk/bin':"$PATH"
