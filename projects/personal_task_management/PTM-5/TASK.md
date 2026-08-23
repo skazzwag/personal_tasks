@@ -16,7 +16,7 @@ A GitHub Actions workflow has been set up now to replace Jira Kanban boards for 
  - [x] `gh-review` installed & setup.
  - [x] `hunk` diff reviewer installed and set as default pager and diff tool where appropriate.
  - [x] `git` CLI commands updated to use `hunk`.
- - [ ] Cheat sheet created and added to repo.
+ - [x] Cheat sheet created and added to repo.
 
 **Created:** 2026-08-23T14:14:18Z
 **Author:** skazzwag
