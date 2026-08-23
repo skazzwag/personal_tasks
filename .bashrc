@@ -107,21 +107,64 @@ alias gb='git branch'
 unalias gfa 2>/dev/null  # Remove alias of gfa='command git fetch --all --prune'
 gfa() {
   git ls-files --others --modified --exclude-standard \
-    | fzf -m --preview 'git diff --color=always {}' \
+    | fzf -m \
+        --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter stage | Esc cancel' \
+        --preview '
+          if git ls-files --error-unmatch -- {} >/dev/null 2>&1; then
+            git diff --color=always -- {}
+          elif command -v bat >/dev/null 2>&1; then
+            bat --color=always --style=numbers -- {}
+          else
+            sed -n "1,200p" -- {}
+          fi
+        ' \
+        --bind 'ctrl-o:execute(hunk diff -- {})' \
+        --bind 'alt-w:toggle-preview-wrap' \
     | xargs -r git add
 }
 
 gfco() {
   git ls-files --others --modified --exclude-standard \
-    | fzf -m --preview 'git diff --color=always {}' \
+    | fzf -m \
+        --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter stage | Esc cancel' \
+        --preview '
+          if git ls-files --error-unmatch -- {} >/dev/null 2>&1; then
+            git diff --color=always -- {}
+          elif command -v bat >/dev/null 2>&1; then
+            bat --color=always --style=numbers -- {}
+          else
+            sed -n "1,200p" -- {}
+          fi
+        ' \
+        --bind 'ctrl-o:execute(hunk diff -- {})' \
+        --bind 'alt-w:toggle-preview-wrap' \
     | xargs -r git checkout --
 }
 
 gfr() {
-  # List staged files
-  git diff --name-only --cached \
-    | fzf -m --preview 'git diff --cached --color=always {}' \
-    | xargs -r git reset HEAD --
+  git diff --cached --name-only \
+    | fzf -m \
+        --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter unstage | Esc cancel' \
+        --preview 'git diff --cached --color=always -- {}' \
+        --bind 'ctrl-o:execute(hunk diff --cached -- {})' \
+        --bind 'alt-w:toggle-preview-wrap' \
+    | xargs -r git restore --staged --
+}
+
+gfl() {
+  git log --color=always \
+      --format=$'%H\t%C(auto)%h %C(dim)%ad%C(reset) %C(auto)%d%C(reset) %s %C(dim)<%an>%C(reset)' \
+      --date=short \
+    | fzf \
+        --ansi \
+        --delimiter=$'\t' \
+        --with-nth=2.. \
+        --header '↑↓ move | Shift+↑↓ preview | Ctrl-O full diff | Alt-W wrap | Enter show | Esc cancel' \
+        --preview 'git show --color=always --stat --patch {1}' \
+        --bind 'ctrl-o:execute(hunk show {1})' \
+        --bind 'alt-w:toggle-preview-wrap' \
+    | cut -f1 \
+    | xargs -r git show
 }
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -167,5 +210,6 @@ eval "$(starship init bash)"
 # Direnv to make env variables per project easy
 eval "$(direnv hook bash)"
 
-# opencode
-export PATH=/home/zak/.opencode/bin:$PATH
+# Add to PATH
+export PATH=$HOME/.opencode/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
