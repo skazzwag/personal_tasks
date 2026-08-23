@@ -118,7 +118,7 @@ gfa() {
             sed -n "1,200p" -- {}
           fi
         ' \
-        --bind 'ctrl-o:execute(hunk diff -- {})' \
+        --bind 'ctrl-o:execute(tmux new-window hunk diff -- {})' \
         --bind 'alt-w:toggle-preview-wrap' \
     | xargs -r git add
 }
@@ -126,7 +126,7 @@ gfa() {
 gfco() {
   git ls-files --others --modified --exclude-standard \
     | fzf -m \
-        --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter stage | Esc cancel' \
+        --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter checkout | Esc cancel' \
         --preview '
           if git ls-files --error-unmatch -- {} >/dev/null 2>&1; then
             git diff --color=always -- {}
@@ -136,7 +136,7 @@ gfco() {
             sed -n "1,200p" -- {}
           fi
         ' \
-        --bind 'ctrl-o:execute(hunk diff -- {})' \
+        --bind 'ctrl-o:execute(tmux new-window hunk diff -- {})' \
         --bind 'alt-w:toggle-preview-wrap' \
     | xargs -r git checkout --
 }
@@ -146,7 +146,7 @@ gfr() {
     | fzf -m \
         --header '↑↓ move | Tab select | Shift+↑↓ preview | Ctrl-O Hunk | Alt-W wrap | Enter unstage | Esc cancel' \
         --preview 'git diff --cached --color=always -- {}' \
-        --bind 'ctrl-o:execute(hunk diff --cached -- {})' \
+        --bind 'ctrl-o:execute(tmux new-window hunk diff --cached -- {})' \
         --bind 'alt-w:toggle-preview-wrap' \
     | xargs -r git restore --staged --
 }
@@ -161,7 +161,7 @@ gfl() {
         --with-nth=2.. \
         --header '↑↓ move | Shift+↑↓ preview | Ctrl-O full diff | Alt-W wrap | Enter show | Esc cancel' \
         --preview 'git show --color=always --stat --patch {1}' \
-        --bind 'ctrl-o:execute(hunk show {1})' \
+        --bind 'ctrl-o:execute(tmux new-window hunk show {1})' \
         --bind 'alt-w:toggle-preview-wrap' \
     | cut -f1 \
     | xargs -r git show
