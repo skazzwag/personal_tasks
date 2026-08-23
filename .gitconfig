@@ -1,5 +1,6 @@
 [core]
 	editor = fresh
+	pager = hunk pager
 [user]
 	name = skazzwag
 	email = zak.n.bell@proton.me
